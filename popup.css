@@ -1,0 +1,149 @@
+body {
+    background: url("images/bkg_lazada.jpeg");
+    background-size: cover;
+    width: 400px;
+    height: fit-content;
+    min-height: 400px;
+    align-items: center;
+    padding: 5px;
+    color: rgb(0, 0, 0);
+    margin: 0; 
+    display: flex;
+    flex-direction: column; 
+    justify-content: center; 
+}
+
+body::-webkit-scrollbar {
+    display: none;
+}
+
+table {
+    color: black;
+    width: fit-content;
+}
+
+#tableContainer {
+    max-height: 400px;
+    overflow-y: auto;
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+}
+
+#tableHeader {
+    background-color: white;
+    color: black;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.tb_head {
+    background-color: white;
+    color: black;
+    padding: 10px;
+}
+
+.td {
+    text-align: center;
+    padding: 10px;
+    margin: 10px;
+    background-color: hsla(0, 0%, 100%, 0.5);
+}
+
+button {
+    padding: 15px;
+    margin: 5px;
+    border-radius: 15px;
+    border: 0px;
+    font-weight: bold;
+    background: radial-gradient(circle, rgba(32,150,250,1) 0%, rgba(0,36,205,1) 75%);
+    color: rgba(255, 255, 255, 0.9);
+    box-shadow: 10px;
+}
+
+button:active {
+    /* Add hover styles if needed */
+    text-transform: inherit;
+    transform: scale(1.05);
+}
+
+.input_container{
+    height: auto;
+    width: auto;
+    background: rgba(255, 255, 255, 0.5);
+    margin: 20px;
+    padding: 0px 10px 0px 10px;
+    display: flex;
+    flex-direction: row;
+    transition: transform 0.05s;
+
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+.early_message{
+    width: fit-content;
+    height: fit-content;
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 20px;
+    margin: 20px;
+
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-size: 15px;
+    text-align: center;
+
+}
+
+.input_container:hover {
+    transform: scale(1.02);
+}
+
+.input_container.selected {
+    transform: scale(1.05);
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+}
+
+.input_container_child{
+    background: none;
+    display: flex;
+    flex-direction: column;
+    margin: 10px;
+}
+
+.no_item{
+    margin: 10px;
+    align-self: center;
+    font-size: 12px;
+}
+
+.title{
+    margin:5px;
+    font-size: 10px;
+    font-weight: bold;
+}
+
+.sku{
+    margin: 5px;
+    font-size: 10px;
+}
+
+.checkbox{
+    display: none;
+}
+
+.img{
+    align-items: center;
+    width: fit-content;
+    height: max-content;
+    align-self: center;
+    box-shadow: 5px;
+}
+
+img{
+    max-height: 80px;
+    max-width: 80px;
+    width: auto;
+    height: auto;
+    align-self: center;
+}
+

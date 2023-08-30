@@ -1,0 +1,36 @@
+{
+  "manifest_version": 3,
+  "name": "FYP Project",
+  "version": "1.0.1",
+  "description": "Testing FYP Project",
+  "icons": {
+    "16": "/images/ic_user2.png",
+    "48": "/images/ic_user2.png",
+    "128": "/images/ic_user2.png"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "CPU Checker"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "*://*.lazada.com.my/cart*"
+      ],
+       "js": [
+        "lazadaScript.js"
+      ],
+      "run_at": "document_end" 
+    }
+  ],
+  "permissions": [
+    "notifications",
+    "tabs",
+    "storage",
+    "nativeMessaging",
+    "activeTab"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  }
+}
