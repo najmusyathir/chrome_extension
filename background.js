@@ -14,7 +14,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
         const currentURL = message.url; // Get the URL from the message sent by the content script
         fetch_data_from_lazada(currentURL, sendResponse);
-        return true;   
+        return true;
     }
 });
 
@@ -42,17 +42,17 @@ function fetch_data_from_lazada(url, sendResponse) {
                 },
                 body: JSON.stringify(cleanedData)
             })
-            .then(response => response.json())
-            .then(data => {
-                console.log("Data sent to FastAPI:", data);
-            })
-            .catch(error => {
-                console.error("Error sending data to FastAPI:", error);
-            });
+                .then(response => response.json())
+                .then(data => {
+                    console.log("Data sent to FastAPI:", data);
+                })
+                .catch(error => {
+                    console.log("Error sending data to FastAPI:", error);
+                });
 
             // Send the response to the popup.js 
             chrome.runtime.sendMessage({ action: 'sentToPopup', data: cleanedData });
-                        
+
             //This send data back to lazadaScript under scrapeLazadaData action message
             sendResponse({ data: cleanedData });
 

@@ -26,7 +26,7 @@ function runDataScraping() {
     else if (response.data) {
       //scraping Successful
       showFloatingMessage("Data scraping successful");
-      console.log('Received scraped data:', response.data);
+      console.log('From lazadaScript:', response.data);
     }
 
     else {

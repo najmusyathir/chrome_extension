@@ -12,7 +12,7 @@ const dataContainer = document.getElementById("data_container");
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.action === 'sentToPopup') {
         // Display the scraped data in the popup console
-        console.log('Received scraped data in popup.js:', message.data);
+        console.log('Received scraped data in popup.js:',JSON.stringify(message.data));
 
         output = JSON.stringify(message.data);
         dataContainer.innerHTML = generateDataContainerHTML(message.data);
