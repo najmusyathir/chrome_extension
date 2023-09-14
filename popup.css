@@ -147,3 +147,7 @@ img{
     align-self: center;
 }
 
+.checkButton{
+    visibility: hidden;
+}
+
