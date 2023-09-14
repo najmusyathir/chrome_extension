@@ -1,11 +1,8 @@
-//background.js v1.3
-
-
+//background.js v1.4
 
 //List of functions:
 //1. Listener from lazadaScript.js
 //2. Do data scraping on target website
-//2.1 Send scraped data to FastAPI for temp saving >> can comment this function to remove some error
 //3. Data clean-up *Don't touch except doing for NLP
 
 // Listen for messages from the content script (popup.js)
@@ -33,22 +30,6 @@ function fetch_data_from_lazada(url, sendResponse) {
         //Scraping Successful
         .then(data => {
             const cleanedData = processData(data);
-
-            //2.1 Send the cleanedData to your FastAPI server
-            fetch("http://127.0.0.1:8000/input/show_inputs", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(cleanedData)
-            })
-                .then(response => response.json())
-                .then(data => {
-                    console.log("Data sent to FastAPI:", data);
-                })
-                .catch(error => {
-                    console.log("Error sending data to FastAPI:", error);
-                });
 
             // Send the response to the popup.js 
             chrome.runtime.sendMessage({ action: 'sentToPopup', data: cleanedData });
