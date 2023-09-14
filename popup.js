@@ -1,29 +1,32 @@
 //popup.js v1.3
 
 const currentURL = window.location.href;
-console.log('Current Link: '+currentURL);
+console.log('Current Link: ' + currentURL);
 
 //List of function
 
 //1. listen from background.js
-output = "test2";
 const dataContainer = document.getElementById("data_container");
+
+let output = null;
+let data = null;
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.action === 'sentToPopup') {
         // Display the scraped data in the popup console
-        console.log('Received scraped data in popup.js:',JSON.stringify(message.data));
-
-        output = JSON.stringify(message.data);
+        output = JSON.stringify(message.data)
+        console.log('Received scraped data in popup.js:', output);
         dataContainer.innerHTML = generateDataContainerHTML(message.data);
+
     }
 });
 
 //evenListener for button
 document.addEventListener('DOMContentLoaded', function () {
     const refreshButton = document.getElementById('refreshButton');
-    const fetchButton = document.getElementById('fetchButton');
+    const cpuFetchButton = document.getElementById('cpuFetchButton');
     const cpuTableDiv = document.getElementById('cpuTable');
+    const nlpclassification = document.getElementById('checkButton');
 
     //Refresh button
     refreshButton.addEventListener('click', function () {
@@ -36,7 +39,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     //Cpu List Button
-    fetchButton.addEventListener('click', async () => {
+    cpuFetchButton.addEventListener('click', async () => {
         try {
             const response = await fetch('http://127.0.0.1:8000/cpu/all');
             const data = await response.json();
@@ -74,13 +77,46 @@ document.addEventListener('DOMContentLoaded', function () {
         return tableHTML;
     }
 
+    //This button send the data from extension to API
+    nlpclassification.addEventListener('click', async () => {
+
+        try {
+            if (output !== null) {
+                const response = await fetch("http://127.0.0.1:8000/input/component_identidier", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: output
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log("Response from FastAPI:", data);
+                    // Process the data as needed here
+                } else {
+                    console.error('Response error:', response.status);
+                    // Handle the error gracefully, e.g., display an error message to the user
+                }
+            }
+            else {
+                console.error('No data send to FastAPI');
+            }
+
+        } catch (error) {
+            console.error('Fetch nlpclassification response error:', error);
+        }
+    });
+
 
 });
 
+//Fetch Product function
 function generateDataContainerHTML(data) {
     let input = '';
+    let item_count = 0;
 
     data.forEach((item, index) => {
+
         inputContainer = `
             <div class="input_container">
                 <div class="no_item">${index + 1}</div>
@@ -94,9 +130,18 @@ function generateDataContainerHTML(data) {
             </div>
         `;
         input += inputContainer;
+        item_count++;
+
     });
 
-    return input;
+    //Make sure item count is two only
+    if (item_count == 2){
+        //document.querySelector('.checkButton').style.visibility = 'visible';
+        return input;
+    }
+
+    else
+        return '<div class="early_message"><strong>item_count Error: '+item_count+' </strong> Please check <strong> two</strong>  item only.</div>';
 }
 
 
