@@ -7,26 +7,26 @@ console.log('Current Link: ' + currentURL);
 
 //1. listen from background.js
 const dataContainer = document.getElementById("data_container");
+const outputDiv = document.getElementById('output_container');
 
-let output = null;
+let fromLazadaScraper = null;
 let data = null;
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.action === 'sentToPopup') {
         // Display the scraped data in the popup console
-        output = JSON.stringify(message.data)
-        console.log('Received scraped data in popup.js:', output);
+        fromLazadaScraper = JSON.stringify(message.data)
+        console.log('Received scraped data in popup.js:', fromLazadaScraper);
         dataContainer.innerHTML = generateDataContainerHTML(message.data);
-
     }
 });
 
 //evenListener for button
 document.addEventListener('DOMContentLoaded', function () {
-    const refreshButton = document.getElementById('refreshButton');
-    const cpuFetchButton = document.getElementById('cpuFetchButton');
-    const cpuTableDiv = document.getElementById('cpuTable');
-    const nlpclassification = document.getElementById('checkButton');
+    const refreshButton = document.getElementById('refresh_button');
+    const cpuFetchButton = document.getElementById('cpu_fetch_button');
+    const cpuTableDiv = document.getElementById('cpu_table');
+    const nlpclassification = document.getElementById('check_button');
 
     //Refresh button
     refreshButton.addEventListener('click', function () {
@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', function () {
     //Cpu List Button
     cpuFetchButton.addEventListener('click', async () => {
         try {
-            const response = await fetch('http://127.0.0.1:8000/cpu/all');
+            const response = await fetch('https://pc-x5qm.onrender.com/cpu/all');
             const data = await response.json();
             const cpuDetails = data.cpu_details;
 
@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    function generateTableHTML(cpuDetails) {
+    function generateTableHTML(itemDetails) {
         let tableHTML = `
       <table>
         <tr class="tb_head">
@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', function () {
         </tr>
     `;
 
-        cpuDetails.forEach((details, index) => {
+        itemDetails.forEach((details, index) => {
             const rowHTML = `
         <tr>
           <td class="td">${index + 1}</td>
@@ -81,21 +81,55 @@ document.addEventListener('DOMContentLoaded', function () {
     nlpclassification.addEventListener('click', async () => {
 
         try {
-            if (output !== null) {
-                const response = await fetch("http://127.0.0.1:8000/input/component_identidier", {
+            console.log("Before data sent to FastAPI:\n" + fromLazadaScraper);
+            if (fromLazadaScraper !== null) {
+                let data = ""
+                const response = await fetch("https://pc-x5qm.onrender.com/input/component_compatibility_checker", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
                     },
-                    body: output
+                    body: fromLazadaScraper
                 });
                 if (response.ok) {
-                    const data = await response.json();
+                    data = await response.json();
                     console.log("Response from FastAPI:", data);
                     // Process the data as needed here
-                } else {
+
+                    if (typeof data[2] === 'object' && data[2].hasOwnProperty('output')) {
+                        console.log("This is the output to HTML: \nThis is CPU socket: " + data[2].cpu_socket + "\nThis is MB socket : " + data[2].mb_socket);
+
+                        // Check if the output contains "Error"
+                        if (data[2].output.includes("Unidentified")) {
+
+                            outputContainer = `<div id="output_error_container"> ${data[2].output} </div>`;
+
+                            outputContainer = `<div class="output_false_container"><div class="output_false_container_child1"><img src="images/redcross.jpg"></div><div class="output_false_container_child2"><h7> ${data[2].output} </h7><br>Item selected is not motherboard + CPU combo<br></div></div>`;
+                            outputDiv.innerHTML = outputContainer;
+                        }
+                        else if (data[2].output.includes("Incompatible")) {
+
+                            outputContainer = `<div id="output_error_container"> ${data[2].output} </div>`;
+
+                            outputContainer = `<div class="output_false_container"><div class="output_false_container_child1"><img src="images/redcross.jpg"></div><div class="output_false_container_child2"><h7> ${data[2].output} </h7><br>Please check component socket <br> <h8>CPU Socket</h8> : <strong>${data[2].cpu_socket}</strong><br><h8 style="margin-right: 9px;">MB Socket</h8> : <strong>${data[2].mb_socket}</strong></div></div>`;
+                            outputDiv.innerHTML = outputContainer;
+                        }
+
+                        else {
+                            outputContainer = `<div id="output_true_container"> ${data[2].output} </div>`;
+
+                            outputContainer = `<div class="output_true_container"><div class="output_true_container_child1"><img src="images/greentick.jpg"></div><div class="output_true_container_child2"><h7> ${data[2].output} </h7><br>Socket type: ${data[2].cpu_socket}</div></div>`;
+
+                            outputDiv.innerHTML = outputContainer;
+                        }
+                    } else {
+                        console.error('Data format error:', data);
+                    }
+
+                }
+                else {
                     console.error('Response error:', response.status);
-                    // Handle the error gracefully, e.g., display an error message to the user
+                 
                 }
             }
             else {
@@ -135,21 +169,23 @@ function generateDataContainerHTML(data) {
     });
 
     //Make sure item count is two only
-    if (item_count == 2){
-        //document.querySelector('.checkButton').style.visibility = 'visible';
+    if (item_count == 2) {
+        const checkButton = document.getElementById('checkButton');
+        if (checkButton) {
+            checkButton.style.visibility = 'visible';
+        }
         return input;
     }
 
     else
-        return '<div class="early_message"><strong>item_count Error: '+item_count+' </strong> Please check <strong> two</strong>  item only.</div>';
+        return '<div class="early_message"><strong>item_count Error: ' + item_count + ' </strong> Please check <strong> two</strong>  item only.</div>';
 }
-
 
 //selectable container
 document.addEventListener('DOMContentLoaded', function () {
-    // ... (your other code)
 
-    let currentlySelected = null; // To track the currently selected container
+
+    let currentlySelected = null; 
 
     // Toggle selected class on click
     dataContainer.addEventListener('click', function (event) {
