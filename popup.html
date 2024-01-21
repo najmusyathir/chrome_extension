@@ -10,23 +10,27 @@
     <style>
         img {
             max-width: 100px;
-            height: auto;
+            height: 100px;
         }
     </style>
 
 </head>
 
 <body>
-    <button id="cpuFetchButton">CPU Model List</button>
-    <button id="refreshButton">Refresh Page</button>
+    <h1>Compatibility Checker</h1>
+
+    <button id="cpu_fetch_button">CPU Model List</button>
+    <button id="refresh_button">Refresh Page</button>
 
     <div id="data_container">
-        <div class="early_message">Please open your <strong>Lazada cart</strong> and <strong> Refresh Page button</strong> to start checker</div>
+        <div class="early_message">Please open your <strong>Lazada cart</strong> and <strong> Refresh Page
+                button</strong> to start checker</div>
     </div>
-    <button id="checkButton">Item checker</button>
+    <div id="output_container"></div>
+    <button id="check_button">Item checker</button>
 
     <div id="tableContainer">
-        <div id="cpuTable"></div>
+        <div id="cpu_table"></div>
     </div>
 
     <script src="popup.js"></script>
